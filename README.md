@@ -1,4 +1,4 @@
-# st2scl
+# CarRentProject
 
 ## Car rental service
 
