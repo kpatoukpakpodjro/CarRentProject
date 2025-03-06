@@ -1,9 +1,7 @@
-# CarRentProject
+# Projet de location de voiture
 
-## Car rental service
 
-https://github.com/charroux/st2scl/tree/main/rentalService
-
+Pour une exécution via l'invite de commande
 ```
 curl --header "Content-Type: application/json" --request GET http://localhost:8080/cars
 ```
@@ -14,7 +12,7 @@ curl --header "Content-Type: application/json" --request PUT --data '{"begin":"4
 
 ### Launch a workflow when the code is updated
 
-The script is there: https://github.com/charroux/st2scl/blob/main/.github/workflows/acttions.yml
+The script is there: https://github.com/kpatoukpakpodjro/ProjectCarRent/blob/main/.github/workflows/acttions.yml
 
 Create a new branch:
 ```

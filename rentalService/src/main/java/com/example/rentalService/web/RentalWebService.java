@@ -7,7 +7,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.time.LocalDate;
 
 @RestController
 public class RentalWebService {
@@ -33,35 +35,43 @@ public class RentalWebService {
 
     @GetMapping("/cars")
     public List<Car> getCars(){
-        return cars;
+        return cars.stream().filter(car -> !car.isRented()).toList(); // Filtrer les voitures non louées
     }
 
     @PutMapping(value = "/cars/{plaque}")
     public void rent(
             @PathVariable("plaque") String plateNumber,
-            @RequestParam(value="rent", required = true)boolean rent,
-            @RequestBody Dates dates) throws CarNotFoundException {
-
+            @RequestParam(value="rent", required = true)boolean rent) throws CarNotFoundException {
+        LocalDate dates = LocalDate.now();
         logger.info("Plate number: " + plateNumber);
         logger.info("Rent: " + rent);
-        logger.info("Dates: " + dates);
 
         Car car = cars.stream().filter(aCar -> aCar.getPlateNumber().equals(plateNumber)).findFirst().orElse(null);
         if(car != null){
+            Dates dateRent = new Dates();
             if(rent == true){
                 car.setRented(true);
-                car.getDates().add(dates);
+                dateRent.setBegin(""+dates);
+                dateRent.setEnd("null");
             } else {
                 car.setRented(false);
+                dateRent = car.getDates().getLast();
+                dateRent.setEnd(""+dates);
+                car.getDates().removeLast();
             }
+            car.getDates().add(dateRent);
         } else {
             logger.error("Car not found: " + plateNumber);
             throw new CarNotFoundException(plateNumber);
         }
 
-
-
-
+    }
+    @GetMapping("/cars/sorted")
+    public List<Car> getAvailableCarsSortedByPrice() {
+        return cars.stream()
+                .filter(car -> !car.isRented()) // Filtrer les voitures non louées
+                .sorted(Comparator.comparingInt(Car::getPrice)) // Trier par prix croissant
+                .toList();
     }
 
 }
